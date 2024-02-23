@@ -5,6 +5,9 @@ import com.volt.scheduler.backend.models.TimeSlot;
 import com.volt.scheduler.backend.repositories.AppointmentRepository;
 import com.volt.scheduler.utils.UtilClass;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.sql.Timestamp;
 import java.util.Comparator;
@@ -25,8 +28,15 @@ public class OperatorService {
 
         return appointmentRepository.findAllByOperatorId(operatorId);
     }
-    public List<String> findOpenSlotsForOperator(Long operatorId, Timestamp dayStart, Timestamp dayEnd) {
-
+    public List<String> findOpenSlotsForOperator(Long operatorId) {
+        // Generate start and end timestamps for the current day
+        LocalDate today = LocalDate.now();
+        LocalDateTime startOfDay = today.atStartOfDay();
+        LocalDateTime endOfDay = today.atTime(23, 59, 59);
+        // Convert to timestamp
+        Timestamp dayStart = Timestamp.valueOf(startOfDay);
+        Timestamp dayEnd = Timestamp.valueOf(endOfDay);
+        //Find all appointments
         List<Appointment> bookedAppointments = appointmentRepository.findAppointmentsByOperatorAndTime(operatorId, dayStart, dayEnd);
         // Ensure appointments are sorted by start time
         bookedAppointments.sort(Comparator.comparing(Appointment::getStartTime));
@@ -50,7 +60,8 @@ public class OperatorService {
 
         return mergeConsecutiveSlots(openSlots);
     }
-
+    // Helper function to merge consecutive slots. If slot = 4-5, 5-6, it will return 4-6
+    // Inspired from: https://stackoverflow.com/questions/32771415/java-8-stream-mixing-two-elements
     private List<String> mergeConsecutiveSlots(List<String> slots) {
         // Base case of slots being empty
         if (slots.isEmpty()) {
@@ -85,6 +96,9 @@ public class OperatorService {
                 .collect(Collectors.toList());
     }
 
+     //Parses a string representation of a time slot into a TimeSlot object.
+     //The input string is expected to be in the format "HH:mm-HH:mm",
+     //representing the start and end times of a time slot.
     private TimeSlot parseSlot(String slot) {
 
         String[] parts = slot.split("-");

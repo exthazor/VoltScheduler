@@ -36,13 +36,10 @@ public class OperatorController {
 
     // Show open slots of operator
     @GetMapping("/{operatorId}/open-slots")
-    public ResponseEntity<?> getOpenSlotsForOperator(
-            @PathVariable Long operatorId,
-            @RequestParam("dayStart") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dayStart,
-            @RequestParam("dayEnd") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dayEnd
-    ) {
+    public ResponseEntity<?> getOpenSlotsForOperator(@PathVariable Long operatorId) {
+
         try {
-            List<String> openSlots = operatorService.findOpenSlotsForOperator(operatorId, Timestamp.valueOf(dayStart), Timestamp.valueOf(dayEnd));
+            List<String> openSlots = operatorService.findOpenSlotsForOperator(operatorId);
             return ResponseEntity.ok(new CommonResponse<>(openSlots, "Open slots retrieved successfully", true));
         } catch (Exception e) {
             return new ResponseEntity<>(new CommonResponse<>(null, "An error occurred: " + e.getMessage(), false), HttpStatus.INTERNAL_SERVER_ERROR);
