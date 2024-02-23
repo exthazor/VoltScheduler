@@ -23,7 +23,7 @@ public class OperatorController {
     }
 
     // Endpoint to get all booked appointments of an operator
-    @GetMapping("/operator/{operatorId}")
+    @GetMapping("/{operatorId}")
     public ResponseEntity<?> getAllAppointmentsByOperator(@PathVariable Long operatorId) {
 
         try {
@@ -35,7 +35,7 @@ public class OperatorController {
     }
 
     // Show open slots of operator
-    @GetMapping("/operator/{operatorId}/open-slots")
+    @GetMapping("/{operatorId}/open-slots")
     public ResponseEntity<?> getOpenSlotsForOperator(
             @PathVariable Long operatorId,
             @RequestParam("dayStart") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dayStart,
