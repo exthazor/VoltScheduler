@@ -33,7 +33,7 @@ public class AppointmentController {
     public ResponseEntity<?> bookAppointment(@RequestBody AppointmentRequest appointmentRequest) {
         try {
             appointmentService.bookAppointment(appointmentRequest);
-            return new ResponseEntity<>(new CommonResponse<>(null, "Appointment booked successfully", true), HttpStatus.CREATED);
+            return ResponseEntity.ok(new CommonResponse<>(null, "Appointment booked successfully", true));
         } catch (CustomExceptionForMessaging e) {
             return new ResponseEntity<>(new CommonResponse<>(null, e.getMessage(), false), HttpStatus.BAD_REQUEST);
         } catch (CustomRuntimeExceptionForMessaging e) {
@@ -51,7 +51,7 @@ public class AppointmentController {
 
         try {
             appointmentService.rescheduleAppointment(request.getAppointmentId(), request.getNewStartTime(), request.getNewEndTime(), request.getDate());
-            return new ResponseEntity<>(new CommonResponse<>(null, "Appointment rescheduled successfully", true), HttpStatus.OK);
+            return ResponseEntity.ok(new CommonResponse<>(null, "Appointment rescheduled successfully", true));
         } catch (CustomExceptionForMessaging e) {
             return new ResponseEntity<>(new CommonResponse<>(null, e.getMessage(), false), HttpStatus.BAD_REQUEST);
         } catch (CustomRuntimeExceptionForMessaging e) {
@@ -67,7 +67,7 @@ public class AppointmentController {
 
         try {
             appointmentService.cancelAppointment(appointmentId);
-            return new ResponseEntity<>(new CommonResponse<>(null, "Appointment canceled successfully", true), HttpStatus.OK);
+            return ResponseEntity.ok(new CommonResponse<>(null, "Appointment canceled successfully", true));
         } catch (CustomExceptionForMessaging e) {
             return new ResponseEntity<>(new CommonResponse<>(null, e.getMessage(), false), HttpStatus.BAD_REQUEST);
         } catch (CustomRuntimeExceptionForMessaging e) {

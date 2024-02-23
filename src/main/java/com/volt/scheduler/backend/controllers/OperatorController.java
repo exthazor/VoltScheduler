@@ -28,7 +28,7 @@ public class OperatorController {
 
         try {
             List<Appointment> appointments = operatorService.findAllAppointmentsByOperator(operatorId);
-            return new ResponseEntity<>(new CommonResponse<>(appointments, "Appointments retrieved successfully", true), HttpStatus.OK);
+            return ResponseEntity.ok(new CommonResponse<>(appointments, "Appointments retrieved successfully", true));
         } catch (Exception e) {
             return new ResponseEntity<>(new CommonResponse<>(null, "An error occurred", false), HttpStatus.INTERNAL_SERVER_ERROR);
         }
