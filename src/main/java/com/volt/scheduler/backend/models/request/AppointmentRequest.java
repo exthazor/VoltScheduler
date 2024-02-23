@@ -4,10 +4,10 @@ import java.time.LocalDate;
 
 public class AppointmentRequest {
 
-    private Long operatorId;
-    private LocalDate date;
-    private String startTime; // "HH:mm" format
-    private String endTime; // "HH:mm" format
+    private Long operatorId; // The ID of the operator
+    private LocalDate date; // The date of the appointment
+    private String startTime; // The start time of the appointment in "HH:mm" format
+    private String endTime; // The end time of the appointment in "HH:mm" format
 
     // Getters and Setters
     public Long getOperatorId() {

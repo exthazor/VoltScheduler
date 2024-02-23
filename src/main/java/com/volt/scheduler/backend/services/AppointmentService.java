@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class AppointmentService {
@@ -24,8 +23,9 @@ public class AppointmentService {
     public void bookAppointment(AppointmentRequest appointmentRequest) throws
             CustomExceptionForMessaging, CustomRuntimeExceptionForMessaging {
 
+        // Convert time from String format to LocalDateTime
         Long operatorId = appointmentRequest.getOperatorId();
-        LocalDate date = appointmentRequest.getDate(); // Assuming the date is part of the request
+        LocalDate date = appointmentRequest.getDate();
         LocalTime startTime = LocalTime.parse(appointmentRequest.getStartTime());
         LocalTime endTime = LocalTime.parse(appointmentRequest.getEndTime());
 
@@ -63,7 +63,7 @@ public class AppointmentService {
             throws CustomExceptionForMessaging, CustomRuntimeExceptionForMessaging {
 
         Appointment existingAppointment = findAppointmentById(appointmentId);
-
+        // Convert time from String format to LocalDateTime
         LocalTime newStartTime = LocalTime.parse(newStartTimeStr, DateTimeFormatter.ofPattern("HH:mm"));
         LocalTime newEndTime = LocalTime.parse(newEndTimeStr, DateTimeFormatter.ofPattern("HH:mm"));
 

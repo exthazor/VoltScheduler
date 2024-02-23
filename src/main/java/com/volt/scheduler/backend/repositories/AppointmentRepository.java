@@ -22,23 +22,15 @@ public class AppointmentRepository {
     private final RowMapper<Appointment> appointmentRowMapper = (rs, rowNum) -> {
 
         Appointment appointment = new Appointment();
-        appointment.setId(rs.getLong("id"));
+        appointment.setAppointmentId(rs.getLong("id"));
         appointment.setOperatorId(rs.getLong("operator_id"));
         appointment.setStartTime(rs.getTimestamp("start_time"));
         appointment.setEndTime(rs.getTimestamp("end_time"));
         return appointment;
     };
 
-    public List<Appointment> findAll() {
-
-        String query = "select * " +
-                "from " +
-                "Appointments";
-
-        return jdbcTemplate.query(query, appointmentRowMapper);
-    }
-
-    public List<Appointment> findById(Long id) {
+    // Find an appointment by appointmentId
+    public List<Appointment> findById(Long appointmentId) {
 
         String query = "select * " +
                 "from " +
@@ -47,12 +39,12 @@ public class AppointmentRepository {
 
         return jdbcTemplate.query(
                 query,
-                ps -> ps.setLong(1, id),
+                ps -> ps.setLong(1, appointmentId),
                 appointmentRowMapper
         );
     }
 
-
+    // Save appointment
     public void save(Appointment appointment) {
 
         String query = "insert into " +
@@ -66,20 +58,8 @@ public class AppointmentRepository {
         );
     }
 
-    public int update(Appointment appointment) {
-
-        String query = "update Appointments " +
-                "set operator_id = ?, start_time = ?, end_time = ?, " +
-                "last_accessed_timestamp = current_timestamp " +
-                "where appointment_id = ?";
-
-        return jdbcTemplate.update(
-                query,
-                appointment.getOperatorId(), appointment.getStartTime(), appointment.getEndTime(), appointment.getId()
-        );
-    }
-
-    public int deleteById(Long id) {
+    // Delete appointment by appointment id
+    public void deleteById(Long appointmentId) {
 
         String query = "delete " +
                 "from " +
@@ -87,9 +67,10 @@ public class AppointmentRepository {
                 "where " +
                 "appointment_id = ?";
 
-        return jdbcTemplate.update(query, id);
+        jdbcTemplate.update(query, appointmentId);
     }
 
+    // Find all appointments of an operator by their id, startTime, and endTime
     public List<Appointment> findAppointmentsByOperatorAndTime(Long operatorId, Timestamp startTime, Timestamp endTime) {
 
         String query = "select * " +
@@ -103,6 +84,7 @@ public class AppointmentRepository {
         return jdbcTemplate.query(query, new Object[]{operatorId, startTime, endTime, endTime, startTime}, appointmentRowMapper);
     }
 
+    // Find all available operators by their startTime and endTime of operation
     public List<Long> findAvailableOperator(Timestamp startTime, Timestamp endTime) {
 
         String sql = "select o.operator_id " +
@@ -123,6 +105,7 @@ public class AppointmentRepository {
         );
     }
 
+    // Find all Appointments by Operator ID
     public List<Appointment> findAllByOperatorId(Long operatorId) {
 
         String query = "select * " +

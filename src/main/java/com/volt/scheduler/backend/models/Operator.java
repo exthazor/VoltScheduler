@@ -2,16 +2,16 @@ package com.volt.scheduler.backend.models;
 
 public class Operator {
 
-    private Long id;
+    private Long operatorId;
 
     private String agentName;
 
     public Long getId() {
-        return id;
+        return operatorId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setOperatorId(Long operatorId) {
+        this.operatorId = operatorId;
     }
 
     public String getName() {

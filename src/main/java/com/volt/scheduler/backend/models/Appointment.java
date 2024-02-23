@@ -2,19 +2,20 @@ package com.volt.scheduler.backend.models;
 
 import java.sql.Timestamp;
 
+// Data class for Appointment Object
 public class Appointment {
 
-    private Long id;
-    private Long operatorId;
-    private Timestamp startTime;
-    private Timestamp endTime;
+    private Long appointmentId; // Unique identifier for the appointment
+    private Long operatorId; // ID of the operator associated with this appointment
+    private Timestamp startTime; // Start time of the appointment
+    private Timestamp endTime; // End time of the appointment
 
-    public Long getId() {
-        return id;
+    public Long getAppointmentId() {
+        return appointmentId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setAppointmentId(Long appointmentId) {
+        this.appointmentId = appointmentId;
     }
 
     public Long getOperatorId() {
