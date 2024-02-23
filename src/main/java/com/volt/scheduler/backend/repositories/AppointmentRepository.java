@@ -5,10 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
-
 import java.sql.Timestamp;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public class AppointmentRepository {
@@ -21,7 +19,7 @@ public class AppointmentRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    private RowMapper<Appointment> appointmentRowMapper = (rs, rowNum) -> {
+    private final RowMapper<Appointment> appointmentRowMapper = (rs, rowNum) -> {
 
         Appointment appointment = new Appointment();
         appointment.setId(rs.getLong("id"));
@@ -35,7 +33,7 @@ public class AppointmentRepository {
 
         String query = "select * " +
                 "from " +
-                "appointments";
+                "Appointments";
 
         return jdbcTemplate.query(query, appointmentRowMapper);
     }
@@ -44,8 +42,8 @@ public class AppointmentRepository {
 
         String query = "select * " +
                 "from " +
-                "appointments " +
-                "where id = ?";
+                "Appointments " +
+                "where appointment_id = ?";
 
         return jdbcTemplate.query(
                 query,
@@ -55,14 +53,14 @@ public class AppointmentRepository {
     }
 
 
-    public int save(Appointment appointment) {
+    public void save(Appointment appointment) {
 
         String query = "insert into " +
-                "appointments " +
+                "Appointments " +
                 "(operator_id, start_time, end_time, description) " +
                 "values (?, ?, ?)";
 
-        return jdbcTemplate.update(
+        jdbcTemplate.update(
                 query,
                 appointment.getOperatorId(), appointment.getStartTime(), appointment.getEndTime()
         );
@@ -70,10 +68,10 @@ public class AppointmentRepository {
 
     public int update(Appointment appointment) {
 
-        String query = "update appointments " +
+        String query = "update Appointments " +
                 "set operator_id = ?, start_time = ?, end_time = ?, " +
                 "last_accessed_timestamp = current_timestamp " +
-                "where id = ?";
+                "where appointment_id = ?";
 
         return jdbcTemplate.update(
                 query,
@@ -83,14 +81,20 @@ public class AppointmentRepository {
 
     public int deleteById(Long id) {
 
-        return jdbcTemplate.update("DELETE FROM appointments WHERE id = ?", id);
+        String query = "delete " +
+                "from " +
+                "Appointments " +
+                "where " +
+                "appointment_id = ?";
+
+        return jdbcTemplate.update(query, id);
     }
 
     public List<Appointment> findAppointmentsByOperatorAndTime(Long operatorId, Timestamp startTime, Timestamp endTime) {
 
         String query = "select * " +
                 "from " +
-                "appointments " +
+                "Appointments " +
                 "where " +
                 "operator_id = ? and " +
                 "((start_time < ? and end_time > ?) " +
@@ -103,15 +107,32 @@ public class AppointmentRepository {
 
         String sql = "select o.operator_id " +
                 "from " +
-                "operators o " +
-                "left join appointments a on o.operator_id = a.operator_id " +
-                "and (a.start_time < ? and a.end_time > ?) " +
-                "or (a.start_time < ? and a.end_time > ?) " +
+                "Operators o " +
+                "left join Appointments a on o.operator_id = a.operator_id " +
+                "and ((a.start_time <= ? and a.end_time >= ?) " +
+                "or (a.start_time >= ? and a.end_time <= ?)) " +
                 "where " +
                 "a.appointment_id is null " +
                 "group by o.operator_id " +
                 "limit 1";
 
-        return jdbcTemplate.query(sql, new Object[]{startTime, endTime}, (rs, rowNum) -> rs.getLong("operator_id"));
+        return jdbcTemplate.query(
+                sql,
+                new Object[]{startTime, endTime, startTime, endTime},
+                (rs, rowNum) -> rs.getLong("operator_id")
+        );
     }
+
+    public List<Appointment> findAllByOperatorId(Long operatorId) {
+
+        String query = "select * " +
+                "from " +
+                "Appointments " +
+                "where " +
+                "operator_id = ? " +
+                "order by start_time asc";
+
+        return jdbcTemplate.query(query, new Object[]{operatorId}, appointmentRowMapper);
+    }
+
 }
